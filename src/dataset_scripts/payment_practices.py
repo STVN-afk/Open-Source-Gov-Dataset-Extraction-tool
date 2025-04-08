@@ -12,4 +12,4 @@ if __name__ == "__main__":
     csv_dir = os.path.abspath(".csvs")
     full_path = os.path.join(csv_dir, filename)
  
-    download(url, filename)
+    download(url, full_path)
