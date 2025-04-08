@@ -5,6 +5,7 @@ from selenium.webdriver.firefox.options import Options
 import pandas as pd 
 import glob 
 import time
+from xlsx2csv import Xlsx2csv
 
 def conversion_to_csv(filename):
     file = pd.read_excel(filename)
