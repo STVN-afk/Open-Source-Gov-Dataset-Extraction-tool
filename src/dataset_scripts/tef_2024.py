@@ -57,10 +57,7 @@ excel_files = glob.glob(os.path.join(download_dir, "*.xlsx"))
 excel_files.sort(key=os.path.getmtime)
 
 
-# latest_file = excel_files[-1]
-
-# Change later to above
-latest_file = "/home/student/Sheffield-Campus-Policy-/downloads/file_example_XLSX_50.xlsx"
+latest_file = excel_files[-1]
 
 print("file name is " + latest_file)
 
