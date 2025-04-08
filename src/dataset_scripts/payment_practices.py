@@ -1,6 +1,4 @@
 from urllib.request import urlretrieve
-import os
-
 
 def download(url, filename):
     urlretrieve(url, filename)
