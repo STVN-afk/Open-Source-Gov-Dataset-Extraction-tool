@@ -1,0 +1,1 @@
+Run 'pytest' in console to run all tests
