@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 import pandas as pd 
 import time, os, urllib.parse
+import pickle
 
 
 # Finds path to download 
@@ -25,8 +26,10 @@ def createDriver():
 def conversion_from_ods_to_csv(filename):
     print("Starting Conversion")
     pd.read_excel(filename, engine="odf")
-   
+
 def downloadFiles(driver):
+
+
     care_csv = driver.find_element(By.PARTIAL_LINK_TEXT, "csv")
     file_name = care_csv.get_attribute("href").split("/")[-1]
     
@@ -54,10 +57,10 @@ def downloadFiles(driver):
     time.sleep(2)
     driver.close()
             
-                
-driver = createDriver()
-driver.get("https://www.cqc.org.uk/about-us/transparency/using-cqc-data")
-downloadFiles(driver)
-conversion_from_ods_to_csv("/home/student/Sheffield-Campus-Policy-/downloads/01_April_2025_Latest_ratings.ods")
+if __name__ == "__main__":                
+    driver = createDriver()
+    driver.get("https://www.cqc.org.uk/about-us/transparency/using-cqc-data")
+    downloadFiles(driver)
+    conversion_from_ods_to_csv("/home/student/Sheffield-Campus-Policy-/downloads/01_April_2025_Latest_ratings.ods")
 
 

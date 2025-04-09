@@ -1,21 +1,39 @@
 import os
-from selenium import webdriver
+
+# Removed as Helper script has function to create driver making it redundant for below
+# Remove comments if the creation of the driver is wanted on the script itself
+
+#from selenium import webdriver
+#from selenium.webdriver.firefox.options import Options
+
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options
 import pandas as pd 
 import glob, time
 import xlwings as xw
+from helper_scripts import helper
 
 def conversion_to_csv(filename):
 
-    path2 = "downloads/Outcomes Portal - Active Final Outcomes.xlsx"
+    '''
+        Checks if the file file can be read using the pd module, if there is an issue, that means 
+        the excel file cannot be read using openpyxl (pd default engine).
+
+        The xlwings module (needs to be downloaded) is used to open the file using excel in the case 
+        it cannot be read by openpyxl and resaving the file using excel's default format which can then 
+        be read in by the script.
+
+        Currently the only workaround is using the xlwings module for this specific excel workbook
+
+        After it reads in the excel file using pandas creates a path to the .csvs folder and saves it 
+        there, then it deletes the excel file.
+    '''
 
     while True:
         # Tries to read Excel file 
         try:
             file = pd.read_excel(filename, engine= "openpyxl")
         except Exception as e:
-        # If there's any issues with the file i.e. Format errors 
+            path2 = filename 
             print("Failed to open workbook; error: ")
             print(e)
             # Opens path using excel app  
@@ -33,11 +51,12 @@ def conversion_to_csv(filename):
 
     file = pd.read_excel(filename, engine= "openpyxl")
     csv_filename = os.path.splitext(os.path.basename(filename))[0] + ".csv"
-    print("file name after split " + csv_filename)
     csv_path = os.path.join(os.path.abspath(".csvs"), csv_filename)
-    print(csv_path)
     file.to_csv(csv_path, index=False, quotechar="'")
     os.remove(filename)
+
+'''
+If 
 
 def createDriver(link):
     # Preferences
@@ -53,6 +72,8 @@ def createDriver(link):
     driver.get(link)
 
     return driver 
+
+'''
 
 def getExcel(driver):
     # Get html elements that have tag a 
@@ -70,7 +91,7 @@ def getExcel(driver):
     driver.execute_script("arguments[0].click();", link)
 
     time.sleep(2)
-    
+
     driver.close()
 
     # Retrieves Excel File 
@@ -86,7 +107,7 @@ if __name__ == "__main__":
 
     url = "https://tef2023.officeforstudents.org.uk/"
 
-    browser_driver = createDriver(url)
+    browser_driver = helper.createDriver(url)
 
     path = getExcel(browser_driver)
 

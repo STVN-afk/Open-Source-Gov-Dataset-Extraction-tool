@@ -1,0 +1,21 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
+import os
+
+def createDriver(link):
+    # Preferences
+    download_dir = os.path.abspath("downloads")
+
+    driver_options = Options()
+    driver_options.set_preference("browser.download.folderList", 2)  # custom location
+    driver_options.set_preference("browser.download.dir", download_dir)
+    driver_options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/pdf")  # adjust MIME type
+    driver_options.set_preference("pdfjs.disabled", True)  # disable built-in viewer
+
+
+    # Creates Driver and requests the url page 
+    driver = webdriver.Firefox(options=driver_options)
+    driver.get(link)
+
+    return driver 
