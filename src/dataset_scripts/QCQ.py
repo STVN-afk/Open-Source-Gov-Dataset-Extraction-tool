@@ -2,9 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 import pandas as pd 
-import glob, time, os, urllib.parse
-from pathlib import Path
-import ezodf
+import time, os, urllib.parse
+
 
 # Finds path to download 
 download_dir = os.path.abspath("downloads")
@@ -25,9 +24,8 @@ def createDriver():
 
 def conversion_from_ods_to_csv(filename):
     print("Starting Conversion")
-
-
-    
+    pd.read_excel(filename, engine="odf")
+   
 def downloadFiles(driver):
     care_csv = driver.find_element(By.PARTIAL_LINK_TEXT, "csv")
     file_name = care_csv.get_attribute("href").split("/")[-1]
@@ -45,11 +43,8 @@ def downloadFiles(driver):
         file_url = x.get_attribute("href")
         file_name = file_url.split("/")[-1]
         decoded_file_name = urllib.parse.unquote(file_name)
-        dl_path = Path(download_dir)
-        path = dl_path / decoded_file_name
-
-    
-        if path.exists():
+       
+        if os.path.exists(os.path.join(download_dir,decoded_file_name)):
             print(file_name + " Already Exists")
         else:
             print("downloading ods file " + decoded_file_name)
