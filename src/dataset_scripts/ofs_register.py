@@ -24,6 +24,8 @@ def ofs_register(url, final_csv_path):
     os.remove("ofs.xlsx")
     os.remove("ofs.csv")
 
+    # Find top row in a better way
+
 
 
 
