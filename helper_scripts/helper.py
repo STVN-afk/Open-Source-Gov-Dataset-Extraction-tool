@@ -19,3 +19,9 @@ def createDriver(link):
     driver.get(link)
 
     return driver 
+
+# Returns the path for any file
+def filePath(name, folder): 
+    dir = os.path.abspath(folder)
+    full_path = os.path.join(dir, name)
+    return full_path
