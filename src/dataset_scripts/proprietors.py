@@ -6,6 +6,7 @@ import time
 from ratelimit import limits, sleep_and_retry
 import os
 from dotenv import load_dotenv
+import sys
 
 # API allows 600 requests in 5 minutes
 REQUESTS = 500
@@ -44,6 +45,10 @@ def fetch_company(proprietor):
         print("Rate limit exceeded, waiting")
         time.sleep(60)
         return fetch_company(proprietor)
+    
+    if response.status_code == 401:
+        print("Unauthorized: Can't gain access")
+        sys.exit()
 
     # If company name finds a match in CH, return true
     data = response.json()
@@ -63,5 +68,5 @@ if __name__ == "__main__":
     filtered_input['proprietor matches'] = False
 
     output = process_rows(filtered_input)
-    output.to_csv('input_data/filtered_input.csv', index=False)
+    output.to_csv('.csvs/proprietors.csv', index=False)
 
