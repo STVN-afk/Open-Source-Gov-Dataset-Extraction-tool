@@ -4,12 +4,16 @@ from helper_scripts import helper
 import pandas as pd
 import time
 from ratelimit import limits, sleep_and_retry
+import os
+from dotenv import load_dotenv
 
 # API allows 600 requests in 5 minutes
 REQUESTS = 500
 PERIOD = 300
 
-API_KEY = "" # Remove when committing, need to create local var
+# Load API key environment variable
+load_dotenv()
+API_KEY = os.getenv("COMPANIES_HOUSE_API_KEY")
 
 
 # Removes schools that aren't academies
