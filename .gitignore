@@ -178,3 +178,6 @@ cython_debug/
 
 # Ignore the .csvs, civil service will decide where they'll be moved to 
 .csvs
+
+# Ignore the Downloads.
+downloads

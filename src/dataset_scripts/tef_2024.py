@@ -1,16 +1,15 @@
-import os
+from selenium.webdriver.common.by import By
+import pandas as pd 
+import glob, time, os 
+import xlwings as xw
+from helper_scripts import helper
 
 # Removed as Helper script has function to create driver making it redundant for below
-# Remove comments if the creation of the driver is wanted on the script itself
+# Remove comments if the creation of the driver is wanted on the script itself alongside the function
 
 #from selenium import webdriver
 #from selenium.webdriver.firefox.options import Options
 
-from selenium.webdriver.common.by import By
-import pandas as pd 
-import glob, time
-import xlwings as xw
-from helper_scripts import helper
 
 def conversion_to_csv(filename):
 
@@ -56,7 +55,7 @@ def conversion_to_csv(filename):
     os.remove(filename)
 
 '''
-If 
+If Driver needs to be created within the script, remove the comments.
 
 def createDriver(link):
     # Preferences
@@ -92,7 +91,7 @@ def getExcel(driver):
 
     time.sleep(2)
 
-    driver.close()
+    driver.quit()
 
     # Retrieves Excel File 
     excel_files = glob.glob(os.path.join(download_dir, "*.xlsx"))

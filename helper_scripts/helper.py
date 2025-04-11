@@ -8,6 +8,9 @@ def createDriver(link):
     download_dir = os.path.abspath("downloads")
 
     driver_options = Options()
+
+    driver_options.add_argument("--headless")
+
     driver_options.set_preference("browser.download.folderList", 2)  # custom location
     driver_options.set_preference("browser.download.dir", download_dir)
     driver_options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/pdf")  # adjust MIME type
