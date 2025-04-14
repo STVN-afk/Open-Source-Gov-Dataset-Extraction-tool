@@ -182,9 +182,4 @@ cython_debug/
 # Ignore the Downloads.
 downloads
 
-C:\Users\Svn15\Coding Shii\Sheffield-Campus-Policy-\Sheffield-Campus-Policy-\01_April_2025_HSCA_Active_Locations_Dual_Registration_Locations.csv
-C:\Users\Svn15\Coding Shii\Sheffield-Campus-Policy-\Sheffield-Campus-Policy-\01_April_2025_HSCA_Active_Locations_HSCA_Active_Locations.csv
-C:\Users\Svn15\Coding Shii\Sheffield-Campus-Policy-\Sheffield-Campus-Policy-\01_April_2025_Latest_ratings_Locations.csv
-C:\Users\Svn15\Coding Shii\Sheffield-Campus-Policy-\Sheffield-Campus-Policy-\01_April_2025_Latest_ratings_Providers.csv
-C:\Users\Svn15\Coding Shii\Sheffield-Campus-Policy-\Sheffield-Campus-Policy-\01%20April%202025%20Deactivated%20locations_Deactivated_Locations.csv
-C:\Users\Svn15\Coding Shii\Sheffield-Campus-Policy-\Sheffield-Campus-Policy-\02_April_2025_CQC_directory.csv
+.CQC_csvs
