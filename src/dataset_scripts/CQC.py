@@ -1,68 +1,50 @@
 import pandas as pd 
-import os, datetime, ezodf
+import os, datetime
 import requests
 
-''' Uses ezodf because the load times for pandas average around 300s or 5 minutes whilst ezodf reads the file within 30 seconds '''
+# import ezodf
 
 # Finds path to download 
 download_dir = os.path.abspath("downloads")
 csv_dir = os.path.abspath(".csvs")
 
 
-
-'''
-def createDriver():
-
-    # Preferences
-    driver_options = Options()
-    driver_options.set_preference("browser.download.folderList", 2)  # custom location
-    driver_options.set_preference("browser.download.dir", download_dir)
-    driver_options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/pdf")  # adjust MIME type
-    driver_options.set_preference("pdfjs.disabled", True)  # disable built-in viewer
-
-    # Creates Driver and requests the url page 
-    driver = webdriver.Firefox(options=driver_options)
-    return driver 
-
-'''
-
-def conversion_from_ods_to_csv(filename):
-    print("Starting Conversion")
-    pd.read_excel(filename, engine="odf")
-    print("read file")
-
-'''
-def downloadFiles(driver):
-
-    care_csv = driver.find_element(By.PARTIAL_LINK_TEXT, "csv")
-    file_name = care_csv.get_attribute("href").split("/")[-1]
-    
-    if os.path.exists(os.path.join(download_dir,file_name)):
-        print(file_name + " Already Exists")
-    else:
-        print("downloaded csv file " + file_name)
-        driver.execute_script("arguments[0].click();", care_csv)
-        time.sleep(2)
-    
-    btnlinks = driver.find_elements(By.XPATH, "//a[contains(@href, '.ods')]")
- 
-    for x in btnlinks:
-        file_url = x.get_attribute("href")
-        file_name = file_url.split("/")[-1]
-        decoded_file_name = urllib.parse.unquote(file_name)
-       
-        if os.path.exists(os.path.join(download_dir,decoded_file_name)):
-            print(file_name + " Already Exists")
-        else:
-            print("downloading ods file " + decoded_file_name)
-            driver.execute_script("arguments[0].click();", x)
-            time.sleep(2) 
-    
-    time.sleep(2)
-    driver.close()
-           
-'''
 def downloadFiles(urls):
+    '''
+    DESCRIPTION:
+    Receives the url list and for each url, if it is a csv file, it is just downloaded if it is new
+    however, if it returns an error message (404) that means that the file has not been updated and
+    therefore we do not download it. If it is an ODS file, we use the requests package to retrieve the 
+    url link. If the status code is 200 (request successful), we save the file locally and read it using 
+    either pandas or ezodl. Afterwards, it is converted to a csv file for each sheet in the ods file and the 
+    ods file is removed locally.
+
+    PANDAS:
+    Reads the entire ods file using the ExcelFile function and then filters out the README document in the
+    excel file. Afterwards it parses the remaining sheets from the excel file and converts them into csv files.
+
+    PANDAS ISSUE:
+    Takes a long time to read and convert each sheet into csv files (average around 20 minutes for Active_location
+    records, 50 minutes or 3000 seconds for Latest Ratings and 540 seconds or 9 minutes for Deactivated Locations.)
+
+    EZODF:
+    Creates the Dataframe manually by reading in the headers and the data and converting it to a dataframe.
+    After, it is then converted using pandas into a csv file. This process takes around (5-10 minutes)
+
+    EZODF ISSUE:
+    Only issue is the integration of the package since the system is vulnerable to modifications.
+
+    PARAMETERS:
+    urls (list of str): List of url links to the respective ods files on the site with the current date.
+
+    POTENTIAL ISSUES:
+    Care home beds in the tables is set as a fault by default in the Bronze (raw) stage
+
+    EXCEPTIONS:
+    404: Not found therefore there is no link for the current date.
+    200: Request Successful therefore there is a link for the current date.
+    '''
+
     for url in urls:
         local_filename = os.path.basename(url)
 
@@ -71,131 +53,100 @@ def downloadFiles(urls):
                 print("Reading in csv")
                 read_file = pd.read_csv(url)
                 read_file.to_csv(str(local_filename).replace(".ods",".csv"))
-                print("downloaded")
+                print(f"downloaded {local_filename}")
             else:
-                print("Reads Ods file (1st sheet)")
                 response = requests.get(url)
-                print(response.raise_for_status)
-
-            
-
-                with open(local_filename, 'wb') as f:
-                    f.write(response.content)
-
-                df = ezodf.opendoc(local_filename)
-
-                final_list = []
-    
-                # Remove comments if you want to use pandas 
-                '''
-                df = pd.ExcelFile(local_filename)
-
-                sheet_names = [sheet for sheet in df.sheet_names if sheet != "README"]
-
-                for sheet in sheet_names:
-                    sheet_file = pd.read_excel(local_filename,sheet_name=sheet)
-
-                    sheet_file["Sheetname"] = sheet
-                    final_list.append(sheet_file)
-
-                if final_list:
-                    final_df = pd.concat(final_list, ignore_index=True)
                 
-                    final_df.to_csv(str(local_filename).replace(".ods",".csv"), index=False)
-                    print("Merged CSV created successfully!")
+                if response.status_code == 200:
+                    with open(local_filename, 'wb') as f:
+                        f.write(response.content)
+                        print(f"downloaded {local_filename}")
+        
+                    df = pd.ExcelFile(local_filename)
+
+                    sheet_names = [sheet for sheet in df.sheet_names if sheet != "README"]
+                    print("got sheet names")
+
+                    for sheet in sheet_names:
+                        print(f"reading in {sheet} file ")
+                        sheet_df = df.parse(sheet_name=sheet)
+                        print("Completed Reading of File")
+                        sheet_df.to_csv((str(local_filename).replace(".ods", "_") + sheet + ".csv"))
+                        print(f"Conversion of {sheet} is complete")
+                                    
+                    '''
+                    #ezodf method
+
+                    #df = ezodf.opendoc(local_filename)
+
+                    for sheet in df.sheets:
+                        if sheet.name == "README":
+                            continue 
+                        else:
+                            data = []
+                            for row in sheet.rows():
+                                # For each row, get the value in each cell.
+                                data.append([cell.value for cell in row])
+                            
+                            if data:
+                                # We assume the first row is the header 
+                                header = data[0]
+                                # Data
+                                table_data = data[1:]
+                                
+
+                                df = pd.DataFrame(table_data, columns=header)
+
+                                columns_with_date = [col for col in df.columns if col is not None and "date" in col.lower()]
+                            
+
+                                # Changes format for dates to not include time in the date.
+                                for column in columns_with_date:
+                                    df[column] = pd.to_datetime(df[column], errors='coerce').dt.date
+
+                                df.to_csv((str(local_filename).replace(".ods", "_") + sheet.name + ".csv"))
+                                print("downloaded " + sheet.name)
+
+                                '''
                 else:
-                    print("No valid sheets found or all sheets were skipped.")
-
+                    raise Exception("No URL link with that name")
                 
-                '''
-                
-          
-
-                #ezodf method
-                for sheet in df.sheets:
-                    if sheet.name == "README":
-                        continue 
-                    else:
-                        data = []
-                        for row in sheet.rows():
-                            # For each row, get the value in each cell.
-                            data.append([cell.value for cell in row])
-                        
-                        if data:
-                            # We assume the first row is the header 
-                            header = data[0]
-                            # Data
-                            table_data = data[1:]
-                            
-
-                            df = pd.DataFrame(table_data, columns=header)
-
-                            columns_with_date = [col for col in df.columns if col is not None and "date" in col.lower()]
-                           
-
-                            # Changes format for dates to not include time in the date.
-                            for column in columns_with_date:
-                                df[column] = pd.to_datetime(df[column], errors='coerce').dt.date
-
-                            # Create a separator row DataFrame.
-                            # This row will repeat across each column.
-                            separator_row = pd.DataFrame([[f"----- {sheet.name} -----"] * len(df.columns)],
-                                columns=df.columns)
-
-                            # Creates a header
-                            header_row = pd.DataFrame([df.columns.tolist()],
-                            columns=df.columns)
-                            
-                            # Optionally add a blank row for additional visual separation.
-                            blank_row = pd.DataFrame([[""] * len(df.columns)], columns=df.columns)
-
-                            sheet_output = pd.concat([separator_row, blank_row, header_row, df, blank_row],ignore_index=True)
-
-                            final_list.append(sheet_output)
-
-                    # Concatenate all pieces into a single DataFrame.
-                    if final_list:
-                        final_df = pd.concat(final_list, ignore_index=True)
-                        
-                        # Save the combined DataFrame to a CSV file.
-                        final_df.to_csv(str(local_filename).replace(".ods",".csv"),header=False, index = False)
-                        print("Combined CSV created successfully!")
-                    else:
-                        print("No data was found in the sheets (or all sheets were skipped).")
-                
-            
-
-                os.remove(local_filename)
-
-                
-
-
-
-                # Multiple tables in sheets separated by headers
-
-
         except Exception as e:
             print(e)
-            print("Outdated, won't be downloaded")
-
-
-    
             
-if __name__ == "__main__":     
+def geturls():
+    
+    '''
+    DESCRIPTION:
+    Using the datetime package, we retrieve the current date and then format it into the same format 
+    as the hyperlink which is the following (Year-Month/Day_Month_Year). After formatting the date,
+    we can then replace the dates on the hyperlink and return it.
+
+    RETURNS:
+    urls (list of str): List of url links to the respective ods files on the site with the current date.
+    '''
+
     ct = datetime.datetime.now()
     formatted_ct = ct.strftime("%Y-%m/%d_%B_%Y")
     deactivated_ct = formatted_ct.replace("_","%20")
 
-    urls = ["https://www.cqc.org.uk/sites/default/files/" +formatted_ct+ "_CQC_directory.csv"
-            ,"https://www.cqc.org.uk/sites/default/files/"+formatted_ct+ "_HSCA_Active_Locations.ods"
-            ,"https://www.cqc.org.uk/sites/default/files/" +formatted_ct+ "_Latest_ratings.ods"
-            ,"https://www.cqc.org.uk/sites/default/files/" +deactivated_ct+ "20Deactivated%20locations.ods"]
+    urls = [f"https://www.cqc.org.uk/sites/default/files/{formatted_ct}_CQC_directory.csv",
+            f"https://www.cqc.org.uk/sites/default/files/{formatted_ct}_HSCA_Active_Locations.ods",
+            f"https://www.cqc.org.uk/sites/default/files/{formatted_ct}_Latest_ratings.ods",
+            f"https://www.cqc.org.uk/sites/default/files/{deactivated_ct}20Deactivated%20locations.ods"
+            ]
+            
+    return urls
+
+if __name__ == "__main__":     
     
-    test_urls = ["https://www.cqc.org.uk/sites/default/files/2025-04/02_April_2025_CQC_directory.csv"
-                 ,"https://www.cqc.org.uk/sites/default/files/2025-04/01_April_2025_HSCA_Active_Locations.ods",
-                 "https://www.cqc.org.uk/sites/default/files/2025-04/01_April_2025_Latest_ratings.ods",
-                 "https://www.cqc.org.uk/sites/default/files/2025-04/01%20April%202025%20Deactivated%20locations.ods"]
+    urls = geturls()
+
+    '''
+    Switch to urls when needed in the downloadFiles
+    '''
+
     # Download Files 
-    downloadFiles(test_urls)
+    downloadFiles(urls)
 
 
