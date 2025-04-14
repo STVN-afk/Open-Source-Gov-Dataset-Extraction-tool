@@ -8,6 +8,9 @@ import os
 from dotenv import load_dotenv
 import sys
 
+# Link for schools database: 
+# ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/edubasealldataYYYYMMDD.csv
+
 # API allows 600 requests in 5 minutes
 REQUESTS = 500
 PERIOD = 300
