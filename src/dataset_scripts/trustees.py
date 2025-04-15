@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from helper_scripts import helper
 import time
 import sys
+from ratelimit import limits, sleep_and_retry
 
 # API allows 600 requests in 5 minutes
 REQUESTS = 500
@@ -45,7 +46,8 @@ def process_rows(trust_data):
 
     return officers_info
         
-
+@sleep_and_retry
+@limits(calls=REQUESTS, period = PERIOD)
 def get_officers(company_id):
 
     '''For the company provided, return their past and present officers,
