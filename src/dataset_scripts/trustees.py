@@ -40,7 +40,7 @@ def process_rows(trust_data):
                 'UKPRN': ukprn,
                 'Name': officer['name'],
                 'Officer Role': officer['officer_role'],
-                'Appointed On': officer['officer_role'],
+                'Appointed On': officer['appointed_on'],
                 'Resigned On': officer.get('resigned_on', 'N/A')
             })
 
