@@ -31,10 +31,12 @@ def process_rows(trust_data):
     officers_info = []
     for index, row in trust_data.iterrows():
         company_id = row['Companies house number']
+        ukprn = row['UKPRN']
 
         for officer in get_officers(company_id):
             officers_info.append({
                 'Companies House Number': company_id,
+                'UKPRN': ukprn,
                 'Name': officer['name'],
                 'Officer Role': officer['officer_role'],
                 'Appointed On': officer['officer_role'],
