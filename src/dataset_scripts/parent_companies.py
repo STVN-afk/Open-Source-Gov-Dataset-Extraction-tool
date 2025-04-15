@@ -117,7 +117,6 @@ def fetch_parent(company_number):
     for item in data['items']:
         if item.get('kind') == 'corporate-entity-person-with-significant-control':
             if item.get('ceased') == False:
-                print(item)
                 return item
 
 
