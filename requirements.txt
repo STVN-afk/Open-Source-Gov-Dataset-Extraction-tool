@@ -1,0 +1,6 @@
+requests
+pandas
+ratelimit
+python-dotenv
+selenium
+xlwings

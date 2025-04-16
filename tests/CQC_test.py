@@ -50,7 +50,7 @@ def test_CQC_mock_download(mock_excel,mock_readcsv,mock_requests_get,mock_basena
     # Checks if parse was called.
     assert mock_excel_file.parse.called
 
-def check_current_date():
+def test_CQC_check_current_date():
     urls = CQC.geturls()
     date_format = datetime.datetime.now().strftime("%Y-%m/%d_%B_%Y")
     deactivated_format = date_format.replace("_","%20")
@@ -62,11 +62,8 @@ def check_current_date():
     print("All urls match with the current date")
             
 
-
-
-
 if __name__ == "__main__":
-    check_current_date()
+    test_CQC_check_current_date()
     test_CQC_mock_download()
 
 

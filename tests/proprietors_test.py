@@ -1,4 +1,4 @@
-from dataset_scripts import proprietors
+from src.dataset_scripts import proprietors
 from helper_scripts import helper
 from unittest.mock import patch, MagicMock
 import pytest

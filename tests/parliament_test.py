@@ -1,4 +1,4 @@
-from dataset_scripts import parliament
+from src.dataset_scripts import parliament
 import os
 import csv
 
