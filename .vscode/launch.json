@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "Run any src script with correct imports",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
@@ -15,7 +15,7 @@
 
     {
       "name": "Python: Run CQC Test",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/tests/CQC_test.py",
       "console": "integratedTerminal",
