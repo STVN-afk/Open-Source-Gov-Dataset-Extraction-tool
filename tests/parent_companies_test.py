@@ -1,4 +1,4 @@
-from dataset_scripts import parent_companies
+from src.dataset_scripts.companies_house import parent_companies
 from unittest.mock import patch, MagicMock
 import pytest
 

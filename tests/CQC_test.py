@@ -1,4 +1,4 @@
-from src.dataset_scripts import CQC 
+from src.dataset_scripts.care_quality_commission import CQC 
 import os, datetime
 import pytest
 import pandas as pd

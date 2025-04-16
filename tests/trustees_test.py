@@ -1,4 +1,4 @@
-from dataset_scripts import trustees
+from src.dataset_scripts.companies_house import trustees
 from unittest.mock import patch, MagicMock
 import pandas as pd
 import pytest

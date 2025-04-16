@@ -1,4 +1,4 @@
-from src.dataset_scripts import tef_2024
+from src.dataset_scripts.teaching_excellence_framework import tef_2024
 import os
 import pandas as pd
 import pytest

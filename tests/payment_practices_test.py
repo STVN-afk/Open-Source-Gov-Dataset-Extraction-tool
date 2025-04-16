@@ -1,4 +1,4 @@
-from src.dataset_scripts import payment_practices
+from src.dataset_scripts.payment_practices import payment_practices
 import os
 
 

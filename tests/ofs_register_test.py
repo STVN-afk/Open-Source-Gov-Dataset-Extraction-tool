@@ -1,4 +1,4 @@
-from src.dataset_scripts import ofs_register
+from src.dataset_scripts.office_for_students import ofs_register
 import os
 
 def test_ofs_register():
