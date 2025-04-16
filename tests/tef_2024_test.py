@@ -1,10 +1,9 @@
 from src.dataset_scripts.teaching_excellence_framework import tef_2024
 import os
 import pandas as pd
-import pytest
 
+def test_conversion_to_csv():
 
-def test_tef_2024_conversion_to_csv():
     test_ds_path = os.path.abspath("tests/test_datasets/file_example_XLSX_50.xlsx")
 
     # Call your conversion function
@@ -25,4 +24,4 @@ def test_tef_2024_conversion_to_csv():
     print("Test passed and file removed.")
 
 if __name__ == "__main__":
-    test_tef_2024_conversion_to_csv()
+    test_conversion_to_csv()
