@@ -23,6 +23,7 @@ To use the Open Source Gov Dataset Extraction Tool, ensure you have the followin
 - API Keys, required by some datasets to request and access data. You will need to register and generate API keys for the following services:
     - [Constituency & MP](https://developer.parliament.uk/)
     - [Company House](https://developer.company-information.service.gov.uk/overview)
+- [GNU Make](https://www.gnu.org/software/make/), used to run the automatic download and import
   
  Store your keys securely using a .env file and load them in your scripts using the python-dotenv package to keep your credentials private.
 
