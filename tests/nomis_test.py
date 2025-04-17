@@ -27,6 +27,8 @@ def test_ethnicities_conversion_success(mock_get):
     assert "Asian" in df.columns
     assert df["GEOGRAPHY_NAME"].nunique() == len(df)
 
+    os.remove(output)
+
 @patch("dataset_scripts.nomis.Nomis.requests.get") 
 def test_national_averages_conversion_success(mock_get):
     mock_response = MagicMock()
@@ -48,6 +50,8 @@ def test_national_averages_conversion_success(mock_get):
     assert "VARIABLE_NAME" in df.columns
     assert "percent" in df.columns
     assert df["VARIABLE_NAME"].nunique() == len(df)
+
+    os.remove(output)
 
 
 @patch("dataset_scripts.nomis.Nomis.requests.get") 
@@ -71,3 +75,31 @@ def test_population_conversion_success(mock_get):
     assert "local authority" in df.columns
     assert "numbers" in df.columns
     assert df["local authority"].nunique() == len(df)
+
+    os.remove(output)
+
+@patch("dataset_scripts.nomis.Nomis.requests.get") 
+def test_population_estimation_conversion_success(mock_get):
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+
+    input = helper.filePath("nomis_population_estimate_test_file.csv", "tests/test_datasets")
+    assert os.path.exists(input), f"Input file {input} does not exist."
+    
+    with open(input, "r") as f:
+        mock_response.text = f.read()
+
+    mock_get.return_value = mock_response
+    
+    Nomis.Population_Estimate_Conversion(1)
+
+    output = helper.filePath(f"PopulationEstimates_Male_{Nomis.getDate()}.csv", ".csvs")
+    df = pd.read_csv(output)
+
+    assert "DATE_NAME" in df.columns
+    assert "Gender" in df.columns
+    assert "GEOGRAPHY_NAME" in df.columns
+    assert "Age 2" in df.columns
+    assert df["GEOGRAPHY_NAME"].nunique() == len(df)
+
+    os.remove(output)
