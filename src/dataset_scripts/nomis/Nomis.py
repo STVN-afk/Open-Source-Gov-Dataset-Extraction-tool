@@ -121,8 +121,9 @@ def Population_Conversion():
         print("Skipping because of server issues")
         return None
     
-
     df = pd.read_csv(io.StringIO(response.text))
+
+    df.rename(columns={'GEOGRAPHY_NAME':'local authority', 'OBS_VALUE':'numbers'}, inplace=True)
 
     output_path = helper.filePath(f"Population_{formatted_date}.csv", ".csvs") 
     df.to_csv(output_path, index=False)
@@ -211,7 +212,7 @@ if __name__ == "__main__":
     #Employment_Conversion()
     #Ethnicities_Conversion()
     #National_Averages_Conversion()
-    #Population_Conversion()
+    Population_Conversion()
     #Population_Estimates()
-    Unemployment_Conversion()
+    #Unemployment_Conversion()
 

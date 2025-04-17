@@ -1,0 +1,4 @@
+VARIABLE_NAME,Confidence,Denominator,Numerator,Variable
+Economic Activity Rate,0.3,5,2,40.0
+Employment Rate,0.3,3,1,33.3
+Unemployment Rate,0.4,5,4,80.0
