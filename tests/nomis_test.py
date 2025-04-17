@@ -1,3 +1,4 @@
+import datetime
 import os
 from unittest.mock import patch, MagicMock
 import pandas as pd
@@ -129,3 +130,46 @@ def test_unemployment_conversion_success(mock_get):
     assert df["Local Authority"].nunique() == len(df)
 
     os.remove(output)
+
+
+@patch("dataset_scripts.nomis.Nomis.requests.get") 
+def test_employment_conversion_success(mock_get):
+    mock_response1 = MagicMock()
+    mock_response2 = MagicMock()
+    mock_response1.status_code = 200
+    mock_response2.status_code = 200
+
+    input1 = helper.filePath("nomis_employment_1_test_file.csv", "tests/test_datasets")
+    input2 = helper.filePath("nomis_employment_2_test_file.csv", "tests/test_datasets")
+
+
+    assert os.path.exists(input1), f"Input file {input1} does not exist."
+    assert os.path.exists(input2), f"Input file {input2} does not exist."
+
+    
+    with open(input1, "r") as f:
+        mock_response1.text = f.read()
+
+    with open(input2, "r") as f:
+        mock_response2.text = f.read()
+
+    mock_get.side_effect = [mock_response1, mock_response2]
+    
+    Nomis.Employment_Conversion()
+
+    output = helper.filePath(f"Employment_{Nomis.getDate()}.csv", ".csvs")
+    df = pd.read_csv(output)
+
+    assert "Local Authority" in df.columns
+    assert "numbers" in df.columns
+    assert "%" in df.columns
+    assert df["Local Authority"].nunique() == len(df)
+
+    os.remove(output)
+
+
+def test_correct_date():
+    date = datetime.datetime.now().strftime("%d-%m-%Y")
+    assert Nomis.getDate() == date,"Wrong Date"
+
+    print("Correct Date")
