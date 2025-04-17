@@ -1,6 +1,7 @@
 import pandas as pd 
 import os, datetime
 import requests
+from helper_scripts import helper
 
 # import ezodf
 
@@ -71,7 +72,10 @@ def downloadFiles(urls):
                         print(f"reading in {sheet} file ")
                         sheet_df = df.parse(sheet_name=sheet)
                         print("Completed Reading of File")
-                        sheet_df.to_csv((str(local_filename).replace(".ods", "_") + sheet + ".csv"))
+
+                        sheet_name = str(local_filename).replace(".ods", "_")
+                        output_path = helper.filePath(f"{sheet_name}{sheet}.csv",".csvs")
+                        sheet_df.to_csv(output_path,index=False)
                         print(f"Conversion of {sheet} is complete")
                                     
                     '''
@@ -142,11 +146,13 @@ if __name__ == "__main__":
     
     urls = geturls()
 
+    test_urls = ["https://www.cqc.org.uk/sites/default/files/2025-04/01_April_2025_HSCA_Active_Locations.ods"]
+
     '''
     Switch to urls when needed in the downloadFiles
     '''
 
     # Download Files 
-    downloadFiles(urls)
+    downloadFiles(test_urls)
 
 
