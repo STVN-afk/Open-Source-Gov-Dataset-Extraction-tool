@@ -103,3 +103,29 @@ def test_population_estimation_conversion_success(mock_get):
     assert df["GEOGRAPHY_NAME"].nunique() == len(df)
 
     os.remove(output)
+
+
+@patch("dataset_scripts.nomis.Nomis.requests.get") 
+def test_unemployment_conversion_success(mock_get):
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+
+    input = helper.filePath("nomis_unemployment_test_file.csv", "tests/test_datasets")
+    assert os.path.exists(input), f"Input file {input} does not exist."
+    
+    with open(input, "r") as f:
+        mock_response.text = f.read()
+
+    mock_get.return_value = mock_response
+    
+    Nomis.Unemployment_Conversion()
+
+    output = helper.filePath(f"Unemployed_{Nomis.getDate()}.csv", ".csvs")
+    df = pd.read_csv(output)
+
+    assert "Local Authority" in df.columns
+    assert "numbers" in df.columns
+    assert "%" in df.columns
+    assert df["Local Authority"].nunique() == len(df)
+
+    os.remove(output)
