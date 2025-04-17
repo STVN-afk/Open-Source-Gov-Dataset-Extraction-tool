@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 import pandas as pd
 import pytest
 
-@patch("dataset_scripts.trustees.requests.get")
+@patch("dataset_scripts.companies_house.trustees.requests.get")
 def test_get_officers_success(mock_get):
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -22,9 +22,9 @@ def test_get_officers_success(mock_get):
     assert result == mock_response.json.return_value["items"]
 
 
-@patch("dataset_scripts.trustees.time.sleep") 
+@patch("dataset_scripts.companies_house.trustees.time.sleep") 
 @patch("builtins.print")
-@patch("dataset_scripts.trustees.requests.get")
+@patch("dataset_scripts.companies_house.trustees.requests.get")
 def test_get_officers_rate_limit(mock_get, mock_print, mock_sleep):
 
     mock_response_429 = MagicMock()
@@ -53,7 +53,7 @@ def test_get_officers_rate_limit(mock_get, mock_print, mock_sleep):
 
 
 @patch("builtins.print")
-@patch("dataset_scripts.trustees.requests.get")
+@patch("dataset_scripts.companies_house.trustees.requests.get")
 def test_get_officers_unauthorised(mock_get, mock_print):
 
     mock_response = MagicMock()
@@ -67,7 +67,7 @@ def test_get_officers_unauthorised(mock_get, mock_print):
     mock_print.assert_called_with("Unauthorized: Can't gain access")
 
 
-@patch("dataset_scripts.trustees.get_officers")
+@patch("dataset_scripts.companies_house.trustees.get_officers")
 def test_process_rows(mock_get_officers):
 
     mock_get_officers.return_value = [

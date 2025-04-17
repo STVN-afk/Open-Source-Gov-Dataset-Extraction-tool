@@ -2,7 +2,7 @@ from src.dataset_scripts.companies_house import parent_companies
 from unittest.mock import patch, MagicMock
 import pytest
 
-@patch("dataset_scripts.parent_companies.requests.get")
+@patch("dataset_scripts.companies_house.parent_companies.requests.get")
 def test_fetch_parent_success(mock_get):
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -25,9 +25,9 @@ def test_fetch_parent_success(mock_get):
     assert result["name"] == "Parent Corp Ltd"
 
 
-@patch("dataset_scripts.trustees.time.sleep")
+@patch("dataset_scripts.companies_house.parent_companies.time.sleep")
 @patch("builtins.print")
-@patch("dataset_scripts.trustees.requests.get")
+@patch("dataset_scripts.companies_house.parent_companies.requests.get")
 def test_fetch_parent_rate_limit(mock_get, mock_print, mock_sleep):
     mock_response_429 = MagicMock(status_code=429)
     mock_response_200 = MagicMock()
@@ -51,7 +51,7 @@ def test_fetch_parent_rate_limit(mock_get, mock_print, mock_sleep):
     assert result["name"] == "Retry Parent Ltd"
 
 
-@patch("dataset_scripts.parent_companies.requests.get")
+@patch("dataset_scripts.companies_house.parent_companies.requests.get")
 @patch("builtins.print")
 def test_fetch_parent_server_error(mock_print, mock_get):
     mock_response = MagicMock(status_code=502)
@@ -62,7 +62,7 @@ def test_fetch_parent_server_error(mock_print, mock_get):
     mock_print.assert_called_with("Skipping because of server issues")
 
 
-@patch("dataset_scripts.parent_companies.requests.get")
+@patch("dataset_scripts.companies_house.parent_companies.requests.get")
 @patch("builtins.print")
 def test_fetch_parent_unauthorized(mock_print, mock_get):
     mock_response = MagicMock(status_code=401)
@@ -74,7 +74,7 @@ def test_fetch_parent_unauthorized(mock_print, mock_get):
     mock_print.assert_called_with("Unauthorized: Can't gain access")
 
 
-@patch("dataset_scripts.trustees.requests.get")
+@patch("dataset_scripts.companies_house.parent_companies.requests.get")
 def test_fetch_parent_no_match(mock_get):
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -90,7 +90,7 @@ def test_fetch_parent_no_match(mock_get):
     assert result is None
 
 
-@patch("dataset_scripts.parent_companies.fetch_parent")
+@patch("dataset_scripts.companies_house.parent_companies.fetch_parent")
 def test_fetch_parents_recursive(mock_fetch_parent):
 
     mock_fetch_parent.side_effect = [
