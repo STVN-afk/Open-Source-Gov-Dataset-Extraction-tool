@@ -1,5 +1,5 @@
 from src.dataset_scripts.care_quality_commission import CQC 
-import os, datetime
+import datetime
 import pytest
 import pandas as pd
 from unittest.mock import patch, mock_open, MagicMock
@@ -56,7 +56,7 @@ def test_CQC_check_current_date():
     deactivated_format = date_format.replace("_","%20")
 
     for url in urls:
-        print("url is " + url)
+        print(f"url is {url}")
         assert str(date_format) in url or str(deactivated_format) in url, f"URL does not match current date"
 
     print("All urls match with the current date")
