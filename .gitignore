@@ -183,3 +183,5 @@ cython_debug/
 downloads
 
 .CQC_csvs
+
+.env

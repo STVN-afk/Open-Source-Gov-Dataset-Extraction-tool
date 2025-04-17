@@ -85,7 +85,6 @@ def Ethnicities_Conversion():
     output_path = helper.filePath(f"EthnicGroup_{formatted_date}.csv", ".csvs") 
     pivot_df.to_csv(output_path, index=False)
 
-
 def National_Averages_Conversion():
 
     formatted_date = getDate()
@@ -172,7 +171,6 @@ def Population_Estimate_Conversion(gender_code):
 def Population_Estimates():
     Population_Estimate_Conversion(1) # Male
     Population_Estimate_Conversion(2) # Female
-
 
 def Unemployment_Conversion():
     formatted_date = getDate()

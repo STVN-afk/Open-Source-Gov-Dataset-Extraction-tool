@@ -16,9 +16,6 @@ PERIOD = 300
 load_dotenv()
 API_KEY = os.getenv("COMPANIES_HOUSE_API_KEY")
 
-
-
-
 def process_rows(trust_data):
     '''For each trust, adds a row in the table containing their info,
         then uses fetch_parents to get info about any parent companies
