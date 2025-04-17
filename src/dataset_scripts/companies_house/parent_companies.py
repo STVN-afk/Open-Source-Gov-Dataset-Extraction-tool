@@ -13,6 +13,7 @@ import sys
 REQUESTS = 500
 PERIOD = 300
 
+# Loads API key
 load_dotenv()
 API_KEY = os.getenv("COMPANIES_HOUSE_API_KEY")
 
@@ -24,16 +25,16 @@ def process_rows(trust_data):
         trust_data (csv): csv data containing all the trusts and their companies house number
         
     Returns:
-        academy_info (array): Every trust's parentage data
+        companies_info (array): Every trust's parentage data
     '''
     
-    academy_info = []
+    companies_info = []
     for index, row in trust_data.iterrows():
         company_id = row['Companies house number']
         company_name = row['Group name']
         ukprn = row['UKPRN']
 
-        academy_info.append({
+        companies_info.append({
             'Subsidiary ID': "",
             'Company ID': company_id,
             'Company Name': company_name,
@@ -42,28 +43,38 @@ def process_rows(trust_data):
             'Degrees Removed': 0
         })
 
-        fetch_parents(academy_info, company_id, ukprn)
+        companies_info = fetch_parents(companies_info, company_id, ukprn)
 
-    return academy_info
+    return companies_info
 
 
 
-def fetch_parents(academy_info, subsidiary_id, ukprn, degrees_removed=1):
+def fetch_parents(companies_info, subsidiary_id, ukprn, degrees_removed=1):
 
     '''Recursively calls fetch_parent to get the full parentage for a trust
         Adds all this to the academy_info array
         Challenge: Some charities etc. listed as parent companies, don't have CH numbers
+            so their CH number in the table is blank
+
+    Args:
+        companies_info (array): Trusts' parentage data
+        subsidiary_id (string): Companies House ID of company
+        ukprn (string): Identifier for school trusts
+        degrees_removed (int): How far removed a company is from a trust
+
+    Returns:
+        companies_info (arrray): Trusts' parentage data
     '''
 
     parent = fetch_parent(subsidiary_id)
     if not parent:
-        return academy_info
+        return companies_info
 
     parent_id = parent.get('identification', {}).get('registration_number')
     parent_name = parent.get('name')
     parent_country = parent.get('identification', {}).get('country_registered')
 
-    academy_info.append({
+    companies_info.append({
         'Subsidiary ID': subsidiary_id,
         'Company ID': parent_id,
         'Company Name': parent_name,
@@ -72,27 +83,28 @@ def fetch_parents(academy_info, subsidiary_id, ukprn, degrees_removed=1):
         'Degrees Removed': degrees_removed
     })
 
+    # Check if it is a British company (if it isn't it doesn't have a CH number, can't trace further)
     if parent_id and any(loc in parent_country.lower() for loc in ["england", "wales", "united kingdom"]):
-        fetch_parents(academy_info, parent_id, ukprn, degrees_removed + 1)
+        fetch_parents(companies_info, parent_id, ukprn, degrees_removed + 1)
     
-    return academy_info
+    return companies_info
 
 
-
+# Stops function exceeding API rate limit
 @sleep_and_retry
 @limits(calls=REQUESTS, period = PERIOD)
 def fetch_parent(company_number):
 
     # What to do with server issues
 
-    '''For the company provided, return their past and present officers,
+    '''For the company provided, return their parent company if they have one
         Checks for rate limits, lack of authorisation and server-side errors
     
     Args: 
         company_id (str): The Companies House ID of the company
 
     Returns:
-        data['items'] (dict): The JSON response from querying the API
+        item (dict): The information about the company's parent
     '''
     
     url = f'https://api.company-information.service.gov.uk/company/{company_number}/persons-with-significant-control'

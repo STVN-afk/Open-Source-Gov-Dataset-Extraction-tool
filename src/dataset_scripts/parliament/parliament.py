@@ -5,17 +5,30 @@ import os
 
 def fetch_20_mps(url, mp_data, i):
 
+    '''Returns a list of 20 MPs using parliament's API
+    Params select current members and members of HoC
+
+    Args:
+        url (string): API to query for MP data
+        mp_data (array): Array of MPs collected so far
+        i (int): How far to skip through list (i=2 means start from 40th MP)
+
+    Returns:
+        mp_data (array): Array of MPs collected
+        num (int): How many MPs were fetched in this function call
+    '''
+
     params = {
-        "IsCurrentMember": "true",  # Filter for current MPs
-        "House": "1", # Only MPs not Lords
-        "skip": (i*20) # Start 0,20,40 etc. people in
+        "IsCurrentMember": "true", 
+        "House": "1", 
+        "skip": (i*20) 
     }
     
     response = requests.get(url, params=params)
     data = response.json()
 
     for mp in data['items']:
-
+        # id = mp['value'].get(id) if id is needed
         name = mp['value'].get('nameDisplayAs')
         constituency = mp['value'].get('latestHouseMembership').get('membershipFrom')
         
@@ -25,10 +38,18 @@ def fetch_20_mps(url, mp_data, i):
 
     return mp_data, num
 
-# API can only do 20 at a time
-# Continues until no more MPs found
-# With each iteration, skip forward 20
+
 def fetch_mps(url):
+
+    '''Parliament's API can only return 20 values at a time, so repeatedly calls fetch_20_mps
+
+    Args:
+        url (string): API to query
+
+    Returns:
+        mp_data (array): Array containing info about all the current MPs
+    '''
+
     mp_data = []
     num = 20
     iterations = 0
@@ -39,6 +60,14 @@ def fetch_mps(url):
     return mp_data
 
 def convert_to_csv(mp_data, final_csv_path):
+
+    '''Take in an array and writes it to a csv
+
+    Args:
+        mp_data (array): Array of MP data
+        final_csv_path: Where to save the csv
+    '''
+
     fields = ['Name', 'Constituency']
 
     with open(final_csv_path, 'w') as f:

@@ -1,15 +1,22 @@
 from urllib.request import urlretrieve
+from helper_scripts import helper
 import os
  
 def download(url, filename):
+
+    '''Downloads the information at a given to a file
+
+    Args:
+        url (string): URL of data
+        filename(string): Name/Path of the file
+    '''
+
     urlretrieve(url, filename)
-    return filename 
  
 if __name__ == "__main__":
     url = ("https://check-payment-practices.service.gov.uk/export/csv/")
-    filename = "payment_practise.csv"
-
-    csv_dir = os.path.abspath(".csvs")
-    full_path = os.path.join(csv_dir, filename)
+    filename = "payment_practises.csv"
  
-    download(url, full_path)
+    file_path = helper.filePath(filename, ".csvs")
+
+    download(url, file_path)

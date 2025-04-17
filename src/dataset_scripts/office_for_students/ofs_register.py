@@ -27,6 +27,7 @@ def ofs_register(url, final_csv_path):
 
     '''Downloads the data and converts to a csv with unneeded data removed
         Uses find_data_start to find where to cut off the csv at
+        Uses na_rep='None' to stop values that say 'None' being converted to empty cells
         Removes unneeded data at the end
 
     Args:
