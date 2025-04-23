@@ -52,18 +52,24 @@ All Dependencies can be found in the requirements.txt file
  This script uses the urllib module to access the url link to the .csv file and saves it within the .csvs folder.
 
  To execute script, run the following command in the terminal:
-  <pre> python .\src\dataset_scripts\payment_practices.py </pre>
+  <pre> python .\src\dataset_scripts\payment_practices\payment_practices.py </pre>
  or f5 on the script in an IDE
 
  ### TEF Outcomes 2023
-  TBA
+  This script automates teh download of CSV files from TEF's [Outcomes 2023](https://tef2023.officeforstudents.org.uk/) website. <br/>
+  This script uses Selenium to create a browser automation tool to simulate a click of the button on the webpage since the link is only generated after button click. <br/>
+  The file returned is a xslx file (excel) which is then converted to an excel file through numpy. However, this xslx could not be read in natively therefore we needed the xlwings module to resave it as an excel file which can then be manipulated to return a csv file.
+
+  To execute script, run the following command in the terminal:
+  <pre> python .\src\dataset_scripts\teaching_excellence_framework\tef_2024.py</pre>
+ or f5 on the script in an IDE
 
 ### Ofs Register 
 This script automates the download of CSV files from the Office for Students's [Ofs Register](https://www.officeforstudents.org.uk/for-providers/regulatory-resources/the-ofs-register/#/) website. <br/>
 This script uses the request package to retrieve the unformatted file from the site and then formats it into a csv file which is saved to the .csvs file.
 
  To execute script, run the following command in the terminal:
-  <pre> python .\src\dataset_scripts\ofs_register.py </pre>
+  <pre> python .\src\dataset_scripts\office_for_students\ofs_register.py</pre>
  or f5 on the script in an IDE
 
  ### CQC 
@@ -72,17 +78,55 @@ This script uses the request package to retrieve the unformatted file from the s
  file and save it locally and then format it into a csv file. If not found, then the button has not been updated with the new dataset so it is ignored.
 
  To execute script, run the following command in the terminal:
-   <pre> python .\src\dataset_scripts\CQC.py </pre>
+   <pre> python .\src\dataset_scripts\care_quality_commission\CQC.py </pre>
  or f5 on the script in an IDE. CQC links may update so to test actual functionality of the script, run the pytest.
 
  ### Constituency & MP 
- TBD
+ This script automates the download of CSV files from the UK Parliments [Constituency & MP Dataset](https://developer.parliament.uk/) using an API Key. <br/>
+ It uses a for loop to iteratively loop through 20 MP's and their Constituencies and saving it into a list until there are no more MP's in which it is then converted into a suitable csv file for usage. <br/>
+ Rate is set to 20 since the UK Parliment's API can only return 20 values at a time.
+
+ To execute script, run the following command in the terminal:
+   <pre> python .\src\dataset_scripts\parliament\parliament.py </pre>
+ or f5 on the script in an IDE. CQC links may update so to test actual functionality of the script, run the pytest.
 
  ### Company House 
- 2 Scripts 
+ 2 Scripts automating the download of csv files for the parent companies and trustees from the [Companies House](https://developer.company-information.service.gov.uk/overview) website using an API Key. 
+
+ The script for parent companies returns the URN and company house no for each parent company in the dataset. <br/>
+ This script recursively calls itself allowing for the full history of each trust and their parentage. <br/>
+ This script also sends 500 requests every 5 minutes due to API limitations.
+
+  To execute script, run the following command in the terminal:
+   <pre> python .\src\dataset_scripts\companies_house\parent_companies.py</pre>
+ or f5 on the script in an IDE.
+
+ The script for trustees returns all the officers for a single trustee, whether they have retired or not and their role. <br/>
+ This script recursively calls itself allowing for the full history of each officer in a trust. <br/>
+ This script also sends 500 requests every 5 minutes due to API limitations.
+
+  To execute script, run the following command in the terminal:
+   <pre> python .\src\dataset_scripts\companies_house\trustees.py</pre>
+ or f5 on the script in an IDE.
 
  ### Nomis 
- TBD
+ This Script Automates the download of CSV files from the Nomi's [Dataset](https://www.nomisweb.co.uk/sources) Website for the Following:
+ - Employment
+ - Ethnicity
+ - National Averages
+ - Population
+ - Population Estimates
+ - Unemployed
+
+Each function executes a specific API Call to the Nomis Website to request a dataset, which is then cleansed and formatted before being saved into a csv file for usage.
+This script also uses the datetime package to get the current date to save the filename in a specific structure. 
+
+
+ To execute script, run the following command in the terminal:
+   <pre> python .\src\dataset_scripts\nomis\Nomis.py </pre>
+ or f5 on the script in an IDE.
+
+
 
  # Contact 
  For questions, feedback, or assistance, you can reach out to:
