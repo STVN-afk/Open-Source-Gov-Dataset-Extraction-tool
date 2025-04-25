@@ -60,24 +60,32 @@ def get_officers(company_id):
         data['items'] (dict): The JSON response from querying the API
     '''
     
+    attempt = 0
+    max_retries = 2
+
     url = f'https://api.company-information.service.gov.uk/company/{company_id}/officers'
-    response = requests.get(url, auth=HTTPBasicAuth(API_KEY, ''))
 
+    while attempt <= max_retries:
+        response = requests.get(url, auth=HTTPBasicAuth(API_KEY, ''))
 
-    if response.status_code == 429:
-        print("Rate limit exceeded, waiting")
-        time.sleep(60)
-        return get_officers(company_id)
-    elif response.status_code == 401:
-        print("Unauthorized: Can't gain access")
-        sys.exit()
-    elif response.status_code in [502, 504]:
-        print("Skipping because of server issues")
-        return None
-    
-
-    data = response.json()
-    return data['items']
+        if response.status_code == 429:
+            print("Rate limit exceeded, waiting")
+            time.sleep(60)
+        elif response.status_code == 401:
+            print("Unauthorized: Can't gain access")
+            sys.exit()
+        elif response.status_code in [502, 504]:
+            attempt += 1
+            if attempt <= max_retries:
+                time.sleep(5)
+                print("Server issue: Reattempting request")
+            else:
+                print(f"Skipping company {company_id} due to repeated server issues")
+        else:
+            data = response.json()
+            return data['items']
+        
+    return None
 
 
 def save_data(data): 

@@ -59,7 +59,7 @@ def test_fetch_parent_server_error(mock_print, mock_get):
 
     result = parent_companies.fetch_parent("12345678")
     assert result is None
-    mock_print.assert_called_with("Skipping because of server issues")
+    mock_print.assert_called_with("Skipping company 12345678 due to repeated server issues")
 
 
 @patch("src.dataset_scripts.companies_house.parent_companies.requests.get")
