@@ -1,6 +1,7 @@
 import requests
 import csv
 import os
+from helper_scripts import helper
 
 
 def fetch_20_mps(url, mp_data, i):
@@ -84,7 +85,6 @@ if __name__ == "__main__":
 
     filename = "parliament.csv"
 
-    csv_dir = os.path.abspath(".csvs")
-    full_path = os.path.join(csv_dir, filename)
+    path = helper.filePath(filename, ".csvs")
 
-    convert_to_csv(mp_data, full_path)
+    convert_to_csv(mp_data, path)
