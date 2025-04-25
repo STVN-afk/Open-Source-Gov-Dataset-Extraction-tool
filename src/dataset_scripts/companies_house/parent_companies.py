@@ -147,7 +147,8 @@ def save_data(data):
 
 if __name__ == "__main__":
 
-    file_path = helper.filePath("GroupExtract.csv", "input_data")
+    # Reads in a table featuring all the academy trusts 
+    file_path = helper.filePath("Trusts.csv", "input_data")
     input = pd.read_csv(file_path, encoding='ISO-8859-1', dtype={
         'Companies house number': str,
         'UKPRN': str})
