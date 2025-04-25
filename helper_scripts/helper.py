@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
+import datetime
 import os
 
 def createDriver(link):
@@ -28,3 +29,13 @@ def filePath(name, folder):
     dir = os.path.abspath(folder)
     full_path = os.path.join(dir, name)
     return full_path
+
+def getDate():
+    '''
+        DESCRIPTION:
+            Retrieves the Current Date when the script was run.
+    '''
+
+    date = datetime.datetime.now()
+    formatted_date = date.strftime("%d-%m-%Y")
+    return formatted_date
